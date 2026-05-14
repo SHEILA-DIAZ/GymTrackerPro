@@ -1,8 +1,8 @@
-# Gradle files
+# Gradle
 .gradle/
 build/
 
-# Local configuration file (SDK path, etc)
+# Local config
 local.properties
 
 # Android Studio
@@ -27,12 +27,12 @@ output-metadata.json
 *.jks
 *.keystore
 
-# Google Services (Firebase)
+# Google services (Firebase)
 google-services.json
 
-# HPROF
+# Android profiling
 *.hprof
 
-# installers
+# Windows installers
 *.exe
 *.msi
