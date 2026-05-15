@@ -1,21 +1,35 @@
 package com.example.gymtrackerpro.screens
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.gymtrackerpro.model.Rutina
 import com.example.gymtrackerpro.viewmodel.GymViewModel
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -33,127 +47,284 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
 
     val grupos = listOf("Pecho", "Espalda", "Pierna", "Brazo", "Hombro")
     var expanded by remember { mutableStateOf(false) }
+    var visible by remember { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Nueva rutina") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Atrás")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* Save action if needed */ }) {
-                        Icon(Icons.Default.Save, contentDescription = null)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
-        }
-    ) { padding ->
-        Column(
+    // Colores Fitness Premium
+    val darkBackground = Color(0xFF0D0D0D)
+    val neonPurple = Color(0xFF7B2FF7)
+    val gradientPurple = Color(0xFFA855F7)
+    val glassColor = Color(0xFFFFFFFF).copy(alpha = 0.05f)
+
+    LaunchedEffect(Unit) {
+        delay(100)
+        visible = true
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(darkBackground)
+    ) {
+        // Overlay de degradado sutil
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            OutlinedTextField(
-                value = ejercicio,
-                onValueChange = { ejercicio = it },
-                label = { Text("Ejercicio") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = !expanded }
-            ) {
-                OutlinedTextField(
-                    value = grupoMuscular,
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Grupo muscular") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    modifier = Modifier.menuAnchor().fillMaxWidth()
-                )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    grupos.forEach { selectionOption ->
-                        DropdownMenuItem(
-                            text = { Text(selectionOption) },
-                            onClick = {
-                                grupoMuscular = selectionOption
-                                expanded = false
-                            }
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            neonPurple.copy(alpha = 0.1f),
+                            Color.Transparent,
+                            darkBackground
                         )
+                    )
+                )
+        )
+
+        Scaffold(
+            containerColor = Color.Transparent,
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Text(
+                            "Nueva Rutina",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp
+                        )
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Atrás",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = Color.Transparent
+                    )
+                )
+            }
+        ) { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(horizontal = 24.dp)
+                    .verticalScroll(rememberScrollState())
+                    .animateContentSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                AnimatedVisibility(
+                    visible = visible,
+                    enter = fadeIn(tween(800)) + slideInVertically(initialOffsetY = { 20 })
+                ) {
+                    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        // Campo Ejercicio
+                        PremiumTextField(
+                            value = ejercicio,
+                            onValueChange = { ejercicio = it },
+                            label = "Ejercicio",
+                            icon = Icons.Default.FitnessCenter,
+                            neonPurple = neonPurple,
+                            glassColor = glassColor
+                        )
+
+                        // Selector de Grupo Muscular (Dropdown)
+                        ExposedDropdownMenuBox(
+                            expanded = expanded,
+                            onExpandedChange = { expanded = !expanded }
+                        ) {
+                            OutlinedTextField(
+                                value = grupoMuscular,
+                                onValueChange = {},
+                                readOnly = true,
+                                label = { Text("Grupo Muscular", color = Color.Gray) },
+                                trailingIcon = { 
+                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                                },
+                                modifier = Modifier
+                                    .menuAnchor()
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(glassColor),
+                                leadingIcon = { 
+                                    Icon(Icons.Default.Category, contentDescription = null, tint = neonPurple) 
+                                },
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = neonPurple,
+                                    unfocusedBorderColor = Color.White.copy(alpha = 0.1f),
+                                    focusedLabelColor = neonPurple,
+                                    unfocusedLabelColor = Color.Gray,
+                                    cursorColor = neonPurple,
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White
+                                ),
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                            
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false },
+                                modifier = Modifier
+                                    .background(Color(0xFF1A1A1A))
+                                    .fillMaxWidth(0.85f)
+                            ) {
+                                grupos.forEach { selectionOption ->
+                                    DropdownMenuItem(
+                                        text = { Text(selectionOption, color = Color.White) },
+                                        onClick = {
+                                            grupoMuscular = selectionOption
+                                            expanded = false
+                                        },
+                                        leadingIcon = {
+                                            Icon(Icons.Default.Circle, contentDescription = null, tint = neonPurple, modifier = Modifier.size(8.dp))
+                                        }
+                                    )
+                                }
+                            }
+                        }
+
+                        // Fila de Series y Repeticiones
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            PremiumTextField(
+                                value = series,
+                                onValueChange = { if (it.all { c -> c.isDigit() }) series = it },
+                                label = "Series",
+                                icon = Icons.Default.Repeat,
+                                neonPurple = neonPurple,
+                                glassColor = glassColor,
+                                modifier = Modifier.weight(1f),
+                                keyboardType = KeyboardType.Number
+                            )
+                            PremiumTextField(
+                                value = repeticiones,
+                                onValueChange = { if (it.all { c -> c.isDigit() }) repeticiones = it },
+                                label = "Reps",
+                                icon = Icons.Default.FlashOn,
+                                neonPurple = neonPurple,
+                                glassColor = glassColor,
+                                modifier = Modifier.weight(1f),
+                                keyboardType = KeyboardType.Number
+                            )
+                        }
+
+                        // Campo Peso
+                        PremiumTextField(
+                            value = peso,
+                            onValueChange = { peso = it },
+                            label = "Peso (kg)",
+                            icon = Icons.Default.MonitorWeight,
+                            neonPurple = neonPurple,
+                            glassColor = glassColor,
+                            keyboardType = KeyboardType.Decimal
+                        )
+
+                        // Campo Fecha
+                        PremiumTextField(
+                            value = fecha,
+                            onValueChange = { fecha = it },
+                            label = "Fecha",
+                            icon = Icons.Default.CalendarToday,
+                            neonPurple = neonPurple,
+                            glassColor = glassColor,
+                            trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = null, tint = Color.Gray) }
+                        )
+
+                        Spacer(modifier = Modifier.height(32.dp))
+
+                        // Botón Guardar con animación
+                        val interactionSource = remember { MutableInteractionSource() }
+                        val isPressed by interactionSource.collectIsPressedAsState()
+                        val scale by animateFloatAsState(if (isPressed) 0.96f else 1f, label = "btnScale")
+
+                        Button(
+                            onClick = {
+                                val userId = usuario?.id ?: return@Button
+                                val nuevaRutina = Rutina(
+                                    usuarioId = userId,
+                                    ejercicio = ejercicio,
+                                    grupoMuscular = grupoMuscular,
+                                    series = series.toIntOrNull() ?: 0,
+                                    repeticiones = repeticiones.toIntOrNull() ?: 0,
+                                    pesoKg = peso.toDoubleOrNull() ?: 0.0,
+                                    fecha = fecha
+                                )
+                                viewModel.agregarRutina(nuevaRutina)
+                                navController.popBackStack()
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                                .graphicsLayer(scaleX = scale, scaleY = scale)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(
+                                    brush = Brush.horizontalGradient(
+                                        colors = listOf(neonPurple, gradientPurple)
+                                    )
+                                ),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+                            contentPadding = PaddingValues(),
+                            shape = RoundedCornerShape(16.dp),
+                            interactionSource = interactionSource
+                        ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Default.Save, contentDescription = null, tint = Color.White)
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    "GUARDAR RUTINA",
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Color.White,
+                                    letterSpacing = 1.2.sp
+                                )
+                            }
+                        }
+                        
+                        Spacer(modifier = Modifier.height(32.dp))
                     }
                 }
             }
-
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
-                    value = series,
-                    onValueChange = { if (it.all { c -> c.isDigit() }) series = it },
-                    label = { Text("Series") },
-                    modifier = Modifier.weight(1f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
-                OutlinedTextField(
-                    value = repeticiones,
-                    onValueChange = { if (it.all { c -> c.isDigit() }) repeticiones = it },
-                    label = { Text("Repeticiones") },
-                    modifier = Modifier.weight(1f),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
-            }
-
-            OutlinedTextField(
-                value = peso,
-                onValueChange = { peso = it },
-                label = { Text("Peso (kg)") },
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
-            )
-
-            OutlinedTextField(
-                value = fecha,
-                onValueChange = { fecha = it },
-                label = { Text("Fecha") },
-                modifier = Modifier.fillMaxWidth(),
-                trailingIcon = { Icon(Icons.Default.DateRange, contentDescription = null) }
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(
-                onClick = {
-                    val userId = usuario?.id ?: return@Button
-                    val nuevaRutina = Rutina(
-                        usuarioId = userId,
-                        ejercicio = ejercicio,
-                        grupoMuscular = grupoMuscular,
-                        series = series.toIntOrNull() ?: 0,
-                        repeticiones = repeticiones.toIntOrNull() ?: 0,
-                        pesoKg = peso.toDoubleOrNull() ?: 0.0,
-                        fecha = fecha
-                    )
-                    viewModel.agregarRutina(nuevaRutina)
-                    navController.popBackStack()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Guardar rutina")
-            }
         }
     }
+}
+
+@Composable
+private fun PremiumTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    icon: ImageVector,
+    neonPurple: Color,
+    glassColor: Color,
+    modifier: Modifier = Modifier,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    trailingIcon: @Composable (() -> Unit)? = null
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label, color = Color.Gray) },
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(glassColor),
+        leadingIcon = { Icon(icon, contentDescription = null, tint = neonPurple) },
+        trailingIcon = trailingIcon,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = neonPurple,
+            unfocusedBorderColor = Color.White.copy(alpha = 0.1f),
+            focusedLabelColor = neonPurple,
+            unfocusedLabelColor = Color.Gray,
+            cursorColor = neonPurple,
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White
+        ),
+        shape = RoundedCornerShape(16.dp),
+        singleLine = true
+    )
 }
