@@ -131,11 +131,12 @@ app/
 
 ---
 
-# 👩‍💻 Autor
+# 👩‍💻 Autoras
 
 Proyecto desarrollado como práctica académica para Programación en Móviles.
 
-- Naomi Isabel Sanchez Chavarria
+- Sheila Diaz Rojas
+- Naomi Sanchez Chavarria
 
 ---
 
