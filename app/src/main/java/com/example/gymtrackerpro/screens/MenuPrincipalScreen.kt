@@ -1,68 +1,66 @@
-package com.example.gymtrackerpro.screens
+package com.example.gymtrackerpro.screens // Define paquete -> Ubicación en el proyecto
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.*
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.gymtrackerpro.viewmodel.GymViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import androidx.compose.animation.* // Importa animaciones -> Control de UI reactiva
+import androidx.compose.animation.core.* // Importa núcleo de animaciones -> Control de estados
+import androidx.compose.foundation.background // Importa fondo -> Estilo visual
+import androidx.compose.foundation.clickable // Importa click -> Interacción de usuario
+import androidx.compose.foundation.interaction.MutableInteractionSource // Importa fuente interacción -> Estado de entrada
+import androidx.compose.foundation.interaction.collectIsPressedAsState // Importa estado presión -> Feedback visual
+import androidx.compose.foundation.layout.* // Importa layouts -> Estructura de UI
+import androidx.compose.foundation.lazy.grid.GridCells // Importa celdas grid -> Configuración de rejilla
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid // Importa grid vertical -> Lista en columnas
+import androidx.compose.foundation.shape.CircleShape // Importa forma circular -> Estilo visual
+import androidx.compose.foundation.shape.RoundedCornerShape // Importa esquinas redondeadas -> Estilo visual
+import androidx.compose.material.icons.Icons // Importa iconos -> Librería Material
+import androidx.compose.material.icons.automirrored.filled.* // Importa iconos con espejo -> Visuales
+import androidx.compose.material.icons.filled.* // Importa todos los iconos -> Visuales
+import androidx.compose.material3.* // Importa componentes Material3 -> UI Kit
+import androidx.compose.runtime.* // Importa runtime de Compose -> Manejo de estados
+import androidx.compose.ui.Alignment // Importa alineación -> Posicionamiento
+import androidx.compose.ui.Modifier // Importa modificadores -> Atributos de componentes
+import androidx.compose.ui.draw.clip // Importa recorte -> Forma visual
+import androidx.compose.ui.graphics.Brush // Importa degradados -> Estilo visual
+import androidx.compose.ui.graphics.Color // Importa colores -> Estilo visual
+import androidx.compose.ui.graphics.graphicsLayer // Importa capa gráfica -> Transformaciones 2D/3D
+import androidx.compose.ui.graphics.vector.ImageVector // Importa vector imagen -> Tipo de icono
+import androidx.compose.ui.text.SpanStyle // Importa estilo de texto -> Formato parcial
+import androidx.compose.ui.text.buildAnnotatedString // Importa cadena anotada -> Texto mixto
+import androidx.compose.ui.text.font.FontWeight // Importa peso fuente -> Estilo texto
+import androidx.compose.ui.text.withStyle // Importa con estilo -> Bloque de formato
+import androidx.compose.ui.unit.dp // Importa unidad dp -> Medidas UI
+import androidx.compose.ui.unit.sp // Importa unidad sp -> Tamaño texto
+import androidx.navigation.NavController // Importa controlador navegación -> Gestión de rutas
+import com.example.gymtrackerpro.viewmodel.GymViewModel // Importa ViewModel -> Lógica de negocio
+import kotlinx.coroutines.delay // Importa retardo -> Control de tiempo
+import kotlinx.coroutines.launch // Importa lanzador de corrutinas -> Tareas asíncronas
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
-    val usuario by viewModel.usuarioLogueado.collectAsState()
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
-    var visible by remember { mutableStateOf(false) }
+@OptIn(ExperimentalMaterial3Api::class) // Habilita APIs experimentales -> Uso de Drawer/TopAppBar
+@Composable // Marca función como Composable -> Generador de UI
+fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) { // Pantalla principal -> Recibe controlador y VM
+    val usuario by viewModel.usuarioLogueado.collectAsState() // Observa sesión -> Obtiene datos de ViewModel
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed) // Estado del menú lateral -> Control de apertura/cierre
+    val scope = rememberCoroutineScope() // Scope de corrutinas -> Lanzador de efectos
+    var visible by remember { mutableStateOf(false) } // Estado animación -> Control de visibilidad
 
-    // Colores Fitness Premium
-    val darkBackground = Color(0xFF0D0D0D)
-    val neonPurple = Color(0xFF7B2FF7)
-    val gradientPurple = Color(0xFFA855F7)
-    val glassColor = Color(0xFFFFFFFF).copy(alpha = 0.05f)
+    val darkBackground = Color(0xFF0D0D0D) // Color fondo -> Paleta oscura
+    val neonPurple = Color(0xFF7B2FF7) // Color principal -> Paleta neón
+    val gradientPurple = Color(0xFFA855F7) // Color secundario -> Paleta degradada
+    val glassColor = Color(0xFFFFFFFF).copy(alpha = 0.05f) // Color traslúcido -> Efecto cristal
 
-    LaunchedEffect(Unit) {
-        delay(200)
-        visible = true
+    LaunchedEffect(Unit) { // Efecto de arranque -> Se ejecuta al cargar
+        delay(200) // Espera inicial -> Pausa estética
+        visible = true // Activa visibilidad -> Dispara animaciones
     }
 
-    ModalNavigationDrawer(
+    ModalNavigationDrawer( // Contenedor de menú lateral -> Navegación de la app
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet(
+            ModalDrawerSheet( // Contenido del menú lateral -> Panel deslizable
                 modifier = Modifier.width(300.dp),
                 drawerShape = RoundedCornerShape(topEnd = 24.dp, bottomEnd = 24.dp),
                 drawerContainerColor = darkBackground
             ) {
-                // Drawer Header
-                Box(
+                Box( // Cabecera del menú -> Info del usuario
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(
@@ -73,7 +71,7 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
                         .padding(24.dp)
                 ) {
                     Column {
-                        Box(
+                        Box( // Avatar circular -> Visual del usuario
                             modifier = Modifier
                                 .size(70.dp)
                                 .clip(CircleShape)
@@ -83,7 +81,7 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
                                 .background(neonPurple),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text(
+                            Text( // Inicial del nombre -> Identificador visual
                                 text = usuario?.nombreCompleto?.take(1)?.uppercase() ?: "G",
                                 color = Color.White,
                                 style = MaterialTheme.typography.headlineMedium,
@@ -91,13 +89,13 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
                             )
                         }
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text(
+                        Text( // Nombre completo -> Dato de sesión
                             text = usuario?.nombreCompleto ?: "Atleta",
                             color = Color.White,
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold
                         )
-                        Text(
+                        Text( // Email -> Dato de sesión
                             text = usuario?.email ?: "gymtracker@pro.com",
                             color = Color.White.copy(alpha = 0.5f),
                             style = MaterialTheme.typography.bodyMedium
@@ -107,58 +105,57 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Drawer Items
-                DrawerItemCustom(
+                DrawerItemCustom( // Opción inicio -> Navegación interna
                     label = "Inicio",
                     icon = Icons.Default.Home,
                     isSelected = true,
-                    onClick = { scope.launch { drawerState.close() } },
+                    onClick = { scope.launch { drawerState.close() } }, // Cierra menú -> Acción UI
                     neonPurple = neonPurple
                 )
-                DrawerItemCustom(
+                DrawerItemCustom( // Opción agregar -> Navegación
                     label = "Agregar Rutina",
                     icon = Icons.Default.AddCircleOutline,
                     isSelected = false,
                     onClick = {
-                        scope.launch { drawerState.close() }
-                        navController.navigate("agregar_rutina")
+                        scope.launch { drawerState.close() } // Cierra menú -> Acción UI
+                        navController.navigate("agregar_rutina") // Navega a formulario -> Destino
                     },
                     neonPurple = neonPurple
                 )
-                DrawerItemCustom(
+                DrawerItemCustom( // Opción mis rutinas -> Navegación
                     label = "Mis Rutinas",
                     icon = Icons.Default.FitnessCenter,
                     isSelected = false,
                     onClick = {
-                        scope.launch { drawerState.close() }
-                        navController.navigate("lista_rutinas")
+                        scope.launch { drawerState.close() } // Cierra menú -> Acción UI
+                        navController.navigate("lista_rutinas") // Navega a historial -> Destino
                     },
                     neonPurple = neonPurple
                 )
-                DrawerItemCustom(
+                DrawerItemCustom( // Opción perfil -> Navegación
                     label = "Mi Perfil",
                     icon = Icons.Default.AccountCircle,
                     isSelected = false,
                     onClick = {
-                        scope.launch { drawerState.close() }
-                        navController.navigate("perfil")
+                        scope.launch { drawerState.close() } // Cierra menú -> Acción UI
+                        navController.navigate("perfil") // Navega a datos personales -> Destino
                     },
                     neonPurple = neonPurple
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
                 
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp), color = Color.White.copy(alpha = 0.1f))
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp), color = Color.White.copy(alpha = 0.1f)) // Divisor -> Separación visual
 
-                DrawerItemCustom(
+                DrawerItemCustom( // Opción logout -> Acción de sistema
                     label = "Cerrar Sesión",
                     icon = Icons.AutoMirrored.Filled.Logout,
                     isSelected = false,
                     onClick = {
-                        scope.launch { drawerState.close() }
-                        viewModel.logout()
-                        navController.navigate("login") {
-                            popUpTo("menu") { inclusive = true }
+                        scope.launch { drawerState.close() } // Cierra menú -> Acción UI
+                        viewModel.logout() // Limpia sesión -> Llama al ViewModel
+                        navController.navigate("login") { // Redirige al login -> Destino final
+                            popUpTo("menu") { inclusive = true } // Limpia historial -> Evita volver atrás
                         }
                     },
                     neonPurple = Color.Red.copy(alpha = 0.7f)
@@ -167,13 +164,12 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
             }
         }
     ) {
-        Box(
+        Box( // Contenedor contenido principal -> Fondo
             modifier = Modifier
                 .fillMaxSize()
                 .background(darkBackground)
         ) {
-            // Fondo con degradado sutil
-            Box(
+            Box( // Efecto de luz radial -> Estilo visual neón
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
@@ -185,10 +181,10 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
                     )
             )
 
-            Scaffold(
+            Scaffold( // Estructura de pantalla -> Layout de contenido
                 containerColor = Color.Transparent,
                 topBar = {
-                    CenterAlignedTopAppBar(
+                    CenterAlignedTopAppBar( // Barra superior personalizada -> Logo y menú
                         title = {
                             Text(
                                 text = buildAnnotatedString {
@@ -204,7 +200,7 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
                         },
                         navigationIcon = {
                             IconButton(
-                                onClick = { scope.launch { drawerState.open() } },
+                                onClick = { scope.launch { drawerState.open() } }, // Abre menú -> Acción UI
                                 modifier = Modifier
                                     .padding(8.dp)
                                     .clip(CircleShape)
@@ -215,7 +211,7 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
                         },
                         actions = {
                             IconButton(
-                                onClick = { /* Notificaciones */ },
+                                onClick = { }, // Notificaciones -> Espacio para futura función
                                 modifier = Modifier
                                     .padding(8.dp)
                                     .clip(CircleShape)
@@ -230,25 +226,25 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
                     )
                 }
             ) { padding ->
-                Column(
+                Column( // Contenedor vertical -> Dashboard principal
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding)
                         .padding(horizontal = 24.dp)
                         .animateContentSize()
                 ) {
-                    AnimatedVisibility(
+                    AnimatedVisibility( // Animación de entrada -> Elementos del dashboard
                         visible = visible,
                         enter = fadeIn(tween(1000)) + slideInVertically(initialOffsetY = { 20 })
                     ) {
                         Column {
                             Spacer(modifier = Modifier.height(20.dp))
-                            Text(
+                            Text( // Saludo -> Texto informativo
                                 text = "Bienvenido de nuevo,",
                                 color = Color.White.copy(alpha = 0.6f),
                                 fontSize = 16.sp
                             )
-                            Text(
+                            Text( // Nombre del atleta -> Dato de sesión
                                 text = usuario?.nombreCompleto ?: "Atleta",
                                 color = Color.White,
                                 style = MaterialTheme.typography.headlineMedium,
@@ -257,8 +253,7 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
                             
                             Spacer(modifier = Modifier.height(24.dp))
 
-                            // Banner Motivacional
-                            Box(
+                            Box( // Banner motivacional -> Diseño visual destacado
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(140.dp)
@@ -272,19 +267,19 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
                                 contentAlignment = Alignment.CenterStart
                             ) {
                                 Column {
-                                    Text(
+                                    Text( // Frase motivadora -> Visual
                                         text = "Supérate hoy",
                                         color = Color.White,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Bold
                                     )
-                                    Text(
+                                    Text( // Subfrase -> Visual
                                         text = "Sigue entrenando y supera\ntus límites físicos.",
                                         color = Color.White.copy(alpha = 0.8f),
                                         fontSize = 14.sp
                                     )
                                 }
-                                Icon(
+                                Icon( // Icono decorativo -> Rayo estético
                                     imageVector = Icons.Default.Bolt,
                                     contentDescription = null,
                                     modifier = Modifier
@@ -297,7 +292,7 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
 
                             Spacer(modifier = Modifier.height(32.dp))
 
-                            Text(
+                            Text( // Título sección -> Organización
                                 text = "Tu Dashboard",
                                 color = Color.White,
                                 fontSize = 18.sp,
@@ -306,52 +301,52 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
 
                             Spacer(modifier = Modifier.height(16.dp))
 
-                            LazyVerticalGrid(
+                            LazyVerticalGrid( // Rejilla de tarjetas -> Acceso rápido
                                 columns = GridCells.Fixed(2),
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                                 verticalArrangement = Arrangement.spacedBy(16.dp),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 item {
-                                    MenuCardPremium(
+                                    MenuCardPremium( // Tarjeta agregar -> Navegación
                                         "Agregar Rutina",
                                         Icons.Default.Add,
                                         neonPurple,
                                         glassColor
                                     ) {
-                                        navController.navigate("agregar_rutina")
+                                        navController.navigate("agregar_rutina") // Navega a formulario -> Destino
                                     }
                                 }
                                 item {
-                                    MenuCardPremium(
+                                    MenuCardPremium( // Tarjeta lista -> Navegación
                                         "Mis Rutinas",
                                         Icons.AutoMirrored.Filled.FormatListBulleted,
                                         neonPurple,
                                         glassColor
                                     ) {
-                                        navController.navigate("lista_rutinas")
+                                        navController.navigate("lista_rutinas") // Navega a historial -> Destino
                                     }
                                 }
                                 item {
-                                    MenuCardPremium(
+                                    MenuCardPremium( // Tarjeta perfil -> Navegación
                                         "Mi Perfil",
                                         Icons.Default.Person,
                                         neonPurple,
                                         glassColor
                                     ) {
-                                        navController.navigate("perfil")
+                                        navController.navigate("perfil") // Navega a datos personales -> Destino
                                     }
                                 }
                                 item {
-                                    MenuCardPremium(
+                                    MenuCardPremium( // Tarjeta cerrar sesión -> Acción
                                         "Cerrar Sesión",
                                         Icons.AutoMirrored.Filled.ExitToApp,
                                         Color.Red.copy(alpha = 0.6f),
                                         glassColor
                                     ) {
-                                        viewModel.logout()
-                                        navController.navigate("login") {
-                                            popUpTo("menu") { inclusive = true }
+                                        viewModel.logout() // Limpia sesión -> Llama al ViewModel
+                                        navController.navigate("login") { // Redirige al login -> Destino
+                                            popUpTo("menu") { inclusive = true } // Limpia historial -> Seguridad
                                         }
                                     }
                                 }
@@ -365,14 +360,14 @@ fun MenuPrincipalScreen(navController: NavController, viewModel: GymViewModel) {
 }
 
 @Composable
-fun DrawerItemCustom(
+fun DrawerItemCustom( // Componente ítem de menú -> Reutilización UI
     label: String,
     icon: ImageVector,
     isSelected: Boolean,
     onClick: () -> Unit,
     neonPurple: Color
 ) {
-    NavigationDrawerItem(
+    NavigationDrawerItem( // Componente estándar -> Opción de menú
         label = { Text(text = label, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal) },
         selected = isSelected,
         onClick = onClick,
@@ -391,18 +386,18 @@ fun DrawerItemCustom(
 }
 
 @Composable
-fun MenuCardPremium(
+fun MenuCardPremium( // Tarjeta de dashboard -> Diseño personalizado
     title: String,
     icon: ImageVector,
     accentColor: Color,
     glassColor: Color,
     onClick: () -> Unit
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(if (isPressed) 0.96f else 1f, label = "cardScale")
+    val interactionSource = remember { MutableInteractionSource() } // Manejo interacción -> Feedback
+    val isPressed by interactionSource.collectIsPressedAsState() // Detecta toque -> Estado reactivo
+    val scale by animateFloatAsState(if (isPressed) 0.96f else 1f, label = "cardScale") // Calcula escala -> Animación
 
-    Card(
+    Card( // Contenedor tarjeta -> Estilo neón
         modifier = Modifier
             .fillMaxWidth()
             .height(140.dp)
@@ -416,28 +411,28 @@ fun MenuCardPremium(
         colors = CardDefaults.cardColors(containerColor = glassColor),
         border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.05f))
     ) {
-        Column(
+        Column( // Contenido tarjeta -> Icono y título
             modifier = Modifier
                 .fillMaxSize()
                 .padding(20.dp),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Box(
+            Box( // Contenedor icono -> Diseño visual
                 modifier = Modifier
                     .size(44.dp)
                     .clip(RoundedCornerShape(12.dp))
                     .background(accentColor.copy(alpha = 0.15f)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
+                Icon( // Icono -> Representación visual
                     imageVector = icon,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
                     tint = accentColor
                 )
             }
-            Text(
+            Text( // Título de la tarjeta -> Texto informativo
                 text = title,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,

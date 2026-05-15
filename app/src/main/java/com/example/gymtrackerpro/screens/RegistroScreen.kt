@@ -1,78 +1,76 @@
-package com.example.gymtrackerpro.screens
+package com.example.gymtrackerpro.screens // Define paquete -> Ubicación en el proyecto
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.*
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.gymtrackerpro.model.Usuario
-import com.example.gymtrackerpro.viewmodel.GymViewModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
+import androidx.compose.animation.AnimatedVisibility // Importa visibilidad animada -> Animación UI
+import androidx.compose.animation.core.* // Importa núcleo de animaciones -> Control de estados
+import androidx.compose.animation.fadeIn // Importa desvanecimiento -> Efecto visual
+import androidx.compose.animation.slideInVertically // Importa deslizamiento vertical -> Efecto visual
+import androidx.compose.foundation.background // Importa fondo -> Estilo visual
+import androidx.compose.foundation.clickable // Importa click -> Interacción de usuario
+import androidx.compose.foundation.interaction.MutableInteractionSource // Importa fuente interacción -> Estado de entrada
+import androidx.compose.foundation.interaction.collectIsPressedAsState // Importa estado presión -> Feedback visual
+import androidx.compose.foundation.layout.* // Importa layouts -> Estructura de UI
+import androidx.compose.foundation.rememberScrollState // Importa estado scroll -> Persistencia de posición
+import androidx.compose.foundation.shape.RoundedCornerShape // Importa esquinas redondeadas -> Estilo visual
+import androidx.compose.foundation.text.KeyboardOptions // Importa teclado -> Configuración entrada
+import androidx.compose.foundation.verticalScroll // Importa scroll vertical -> Navegación de contenido
+import androidx.compose.material.icons.Icons // Importa iconos -> Librería Material
+import androidx.compose.material.icons.filled.* // Importa todos los iconos -> Visuales
+import androidx.compose.material3.* // Importa componentes Material3 -> UI Kit
+import androidx.compose.runtime.* // Importa runtime de Compose -> Manejo de estados
+import androidx.compose.runtime.saveable.rememberSaveable // Importa estado persistente -> Memoria ante rotación
+import androidx.compose.ui.Alignment // Importa alineación -> Posicionamiento
+import androidx.compose.ui.Modifier // Importa modificadores -> Atributos de componentes
+import androidx.compose.ui.draw.clip // Importa recorte -> Forma visual
+import androidx.compose.ui.graphics.Brush // Importa degradados -> Estilo visual
+import androidx.compose.ui.graphics.Color // Importa colores -> Estilo visual
+import androidx.compose.ui.graphics.graphicsLayer // Importa capa gráfica -> Transformaciones 2D/3D
+import androidx.compose.ui.text.SpanStyle // Importa estilo de texto -> Formato parcial
+import androidx.compose.ui.text.buildAnnotatedString // Importa cadena anotada -> Texto mixto
+import androidx.compose.ui.text.font.FontWeight // Importa peso fuente -> Estilo texto
+import androidx.compose.ui.text.input.KeyboardType // Importa tipo teclado -> Configuración entrada
+import androidx.compose.ui.text.input.PasswordVisualTransformation // Importa transformación password -> Privacidad entrada
+import androidx.compose.ui.text.input.VisualTransformation // Importa transformación visual -> Formato entrada
+import androidx.compose.ui.text.withStyle // Importa con estilo -> Bloque de formato
+import androidx.compose.ui.unit.dp // Importa unidad dp -> Medidas UI
+import androidx.compose.ui.unit.sp // Importa unidad sp -> Tamaño texto
+import androidx.navigation.NavController // Importa controlador navegación -> Gestión de rutas
+import com.example.gymtrackerpro.model.Usuario // Importa Modelo Usuario -> Estructura datos
+import com.example.gymtrackerpro.viewmodel.GymViewModel // Importa ViewModel -> Lógica de negocio
+import kotlinx.coroutines.delay // Importa retardo -> Control de tiempo
+import kotlinx.coroutines.launch // Importa lanzador de corrutinas -> Tareas asíncronas
+import java.text.SimpleDateFormat // Importa formateador de fecha -> Utilidad de tiempo
+import java.util.* // Importa utilidades java -> Manejo de fechas
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
-    var nombreCompleto by rememberSaveable { mutableStateOf("") }
-    var user by rememberSaveable { mutableStateOf("") }
-    var email by rememberSaveable { mutableStateOf("") }
-    var edad by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var passwordVisible by rememberSaveable { mutableStateOf(false) }
-    var visible by remember { mutableStateOf(false) }
+@OptIn(ExperimentalMaterial3Api::class) // Habilita APIs experimentales -> Uso de TopAppBar
+@Composable // Marca función como Composable -> Generador de UI
+fun RegistroScreen(navController: NavController, viewModel: GymViewModel) { // Pantalla de registro -> Recibe controlador y VM
+    var nombreCompleto by rememberSaveable { mutableStateOf("") } // Estado nombre -> Texto ingresado
+    var user by rememberSaveable { mutableStateOf("") } // Estado usuario -> Texto ingresado
+    var email by rememberSaveable { mutableStateOf("") } // Estado email -> Texto ingresado
+    var edad by rememberSaveable { mutableStateOf("") } // Estado edad -> Texto ingresado
+    var password by rememberSaveable { mutableStateOf("") } // Estado contraseña -> Texto ingresado
+    var passwordVisible by rememberSaveable { mutableStateOf(false) } // Estado visibilidad -> Booleano UI
+    var visible by remember { mutableStateOf(false) } // Estado animación -> Control de visibilidad
     
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() } // Estado snackbar -> Gestor de mensajes
+    val scope = rememberCoroutineScope() // Scope de corrutinas -> Lanzador de efectos
 
-    // Colors
-    val darkBackground = Color(0xFF0D0D0D)
-    val neonPurple = Color(0xFF7B2FF7)
-    val gradientPurple = Color(0xFFA855F7)
-    val glassColor = Color(0xFFFFFFFF).copy(alpha = 0.05f)
+    val darkBackground = Color(0xFF0D0D0D) // Color fondo -> Paleta oscura
+    val neonPurple = Color(0xFF7B2FF7) // Color principal -> Paleta neón
+    val gradientPurple = Color(0xFFA855F7) // Color secundario -> Paleta degradada
+    val glassColor = Color(0xFFFFFFFF).copy(alpha = 0.05f) // Color traslúcido -> Efecto cristal
 
-    LaunchedEffect(Unit) {
-        delay(200)
-        visible = true
+    LaunchedEffect(Unit) { // Efecto de arranque -> Se ejecuta al cargar
+        delay(200) // Espera inicial -> Pausa estética
+        visible = true // Activa visibilidad -> Dispara animaciones
     }
 
-    Box(
+    Box( // Contenedor base -> Capas de fondo
         modifier = Modifier
             .fillMaxSize()
             .background(darkBackground)
     ) {
-        // Background Gradient
-        Box(
+        Box( // Fondo degradado -> Efecto estético
             modifier = Modifier
                 .fillMaxSize()
                 .background(
@@ -86,11 +84,11 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
                 )
         )
 
-        Scaffold(
+        Scaffold( // Estructura de pantalla -> Layout estándar
             containerColor = Color.Transparent,
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
-                CenterAlignedTopAppBar(
+                CenterAlignedTopAppBar( // Barra superior -> Navegación atrás
                     title = {
                         Text(
                             "Crear Cuenta",
@@ -100,7 +98,7 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
+                        IconButton(onClick = { navController.popBackStack() }) { // Acción volver -> Regresa pantalla previa
                             Icon(
                                 imageVector = Icons.Default.ArrowBack,
                                 contentDescription = "Atrás",
@@ -114,7 +112,7 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
                 )
             }
         ) { padding ->
-            Column(
+            Column( // Contenedor vertical -> Formulario scrolleable
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
@@ -122,22 +120,21 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
                     .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AnimatedVisibility(
+                AnimatedVisibility( // Animación de entrada -> Header
                     visible = visible,
                     enter = fadeIn(animationSpec = tween(800)) + slideInVertically(initialOffsetY = { -20 })
                 ) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Spacer(modifier = Modifier.height(16.dp))
                         
-                        // Header Icon
-                        Box(
+                        Box( // Contenedor icono -> Diseño visual
                             modifier = Modifier
                                 .size(80.dp)
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(neonPurple.copy(alpha = 0.1f)),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(
+                            Icon( // Icono central -> Visual decorativo
                                 imageVector = Icons.Default.FitnessCenter,
                                 contentDescription = null,
                                 modifier = Modifier.size(45.dp),
@@ -147,14 +144,14 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
 
                         Spacer(modifier = Modifier.height(24.dp))
 
-                        Text(
+                        Text( // Título -> Mensaje principal
                             text = "Únete a la élite",
                             style = MaterialTheme.typography.headlineMedium,
                             color = Color.White,
                             fontWeight = FontWeight.ExtraBold
                         )
                         
-                        Text(
+                        Text( // Subtítulo -> Texto secundario
                             text = "Comienza tu transformación hoy mismo",
                             color = Color.White.copy(alpha = 0.6f),
                             fontSize = 14.sp,
@@ -166,13 +163,11 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // Input Fields
-                Column(
+                Column( // Grupo de entradas -> Campos del usuario
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Full Name
-                    RegistroTextField(
+                    RegistroTextField( // Campo nombre -> Entrada texto
                         value = nombreCompleto,
                         onValueChange = { nombreCompleto = it },
                         label = "Nombre Completo",
@@ -181,8 +176,7 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
                         glassColor = glassColor
                     )
 
-                    // User
-                    RegistroTextField(
+                    RegistroTextField( // Campo usuario -> Entrada texto
                         value = user,
                         onValueChange = { user = it },
                         label = "Usuario",
@@ -191,8 +185,7 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
                         glassColor = glassColor
                     )
 
-                    // Email
-                    RegistroTextField(
+                    RegistroTextField( // Campo email -> Entrada validada
                         value = email,
                         onValueChange = { email = it },
                         label = "Email",
@@ -202,8 +195,7 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
                         glassColor = glassColor
                     )
 
-                    // Age
-                    RegistroTextField(
+                    RegistroTextField( // Campo edad -> Entrada numérica
                         value = edad,
                         onValueChange = { if (it.all { char -> char.isDigit() }) edad = it },
                         label = "Edad",
@@ -213,8 +205,7 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
                         glassColor = glassColor
                     )
 
-                    // Password
-                    OutlinedTextField(
+                    OutlinedTextField( // Campo contraseña -> Entrada protegida
                         value = password,
                         onValueChange = { password = it },
                         label = { Text("Contraseña", color = Color.Gray) },
@@ -244,38 +235,36 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
                         singleLine = true
                     )
 
-                    // Password Strength Indicator (Simple)
-                    if (password.isNotEmpty()) {
+                    if (password.isNotEmpty()) { // Indicador fortaleza -> Reacción a input
                         PasswordStrengthBar(password, neonPurple)
                     }
                 }
 
                 Spacer(modifier = Modifier.height(40.dp))
 
-                // Register Button
-                val interactionSource = remember { MutableInteractionSource() }
-                val isPressed by interactionSource.collectIsPressedAsState()
-                val scale by animateFloatAsState(if (isPressed) 0.96f else 1f, label = "btnScale")
+                val interactionSource = remember { MutableInteractionSource() } // Manejo de interacción -> Feedback visual
+                val isPressed by interactionSource.collectIsPressedAsState() // Detecta presión -> Estado reactivo
+                val scale by animateFloatAsState(if (isPressed) 0.96f else 1f, label = "btnScale") // Calcula escala -> Animación
 
-                Button(
+                Button( // Botón registro -> Ejecuta guardado
                     onClick = {
-                        if (nombreCompleto.isBlank() || user.isBlank() || email.isBlank() || edad.isBlank() || password.isBlank()) {
-                            scope.launch { snackbarHostState.showSnackbar("Por favor, completa todos los campos") }
+                        if (nombreCompleto.isBlank() || user.isBlank() || email.isBlank() || edad.isBlank() || password.isBlank()) { // Validación vacíos -> Control de datos
+                            scope.launch { snackbarHostState.showSnackbar("Por favor, completa todos los campos") } // Muestra aviso -> Feedback UI
                             return@Button
                         }
                         
-                        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                            scope.launch { snackbarHostState.showSnackbar("Email inválido") }
+                        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) { // Validación formato email -> Control de datos
+                            scope.launch { snackbarHostState.showSnackbar("Email inválido") } // Muestra aviso -> Feedback UI
                             return@Button
                         }
 
-                        if (password.length < 6) {
-                            scope.launch { snackbarHostState.showSnackbar("La contraseña debe tener al menos 6 caracteres") }
+                        if (password.length < 6) { // Validación longitud clave -> Seguridad
+                            scope.launch { snackbarHostState.showSnackbar("La contraseña debe tener al menos 6 caracteres") } // Muestra aviso -> Feedback UI
                             return@Button
                         }
 
-                        val fechaActual = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
-                        val nuevoUsuario = Usuario(
+                        val fechaActual = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date()) // Genera fecha -> Dato de sistema
+                        val nuevoUsuario = Usuario( // Crea objeto -> Empaqueta datos para DB
                             nombreUsuario = user,
                             password = password,
                             nombreCompleto = nombreCompleto,
@@ -284,11 +273,11 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
                             fechaRegistro = fechaActual
                         )
 
-                        viewModel.registrarUsuario(nuevoUsuario) { error ->
-                            if (error == null) {
-                                navController.popBackStack()
-                            } else {
-                                scope.launch { snackbarHostState.showSnackbar(error) }
+                        viewModel.registrarUsuario(nuevoUsuario) { error -> // Llama a registro -> Envía objeto al ViewModel
+                            if (error == null) { // Caso éxito -> Navegación
+                                navController.popBackStack() // Vuelve al login -> Acción final exitosa
+                            } else { // Caso error (duplicado) -> Notificación
+                                scope.launch { snackbarHostState.showSnackbar(error) } // Muestra error -> Feedback del servidor/DB
                             }
                         }
                     },
@@ -307,7 +296,7 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
                     shape = RoundedCornerShape(16.dp),
                     interactionSource = interactionSource
                 ) {
-                    Text(
+                    Text( // Texto del botón -> Call to action
                         "REGISTRARME",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
@@ -318,25 +307,24 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // Already have account
-                Row(
+                Row( // Footer -> Alternativa login
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 32.dp),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
+                    Text( // Pregunta -> Texto guía
                         text = "¿Ya tienes cuenta? ",
                         color = Color.White.copy(alpha = 0.7f),
                         fontSize = 14.sp
                     )
-                    Text(
+                    Text( // Link login -> Navegación atrás
                         text = "Inicia sesión",
                         color = neonPurple,
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable { navController.popBackStack() }
+                        modifier = Modifier.clickable { navController.popBackStack() } // Vuelve atrás -> Regresa al login
                     )
                 }
             }
@@ -345,7 +333,7 @@ fun RegistroScreen(navController: NavController, viewModel: GymViewModel) {
 }
 
 @Composable
-fun RegistroTextField(
+fun RegistroTextField( // Componente campo personalizado -> Reutilización de UI
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
@@ -354,7 +342,7 @@ fun RegistroTextField(
     neonPurple: Color,
     glassColor: Color
 ) {
-    OutlinedTextField(
+    OutlinedTextField( // Campo de texto -> Entrada de datos
         value = value,
         onValueChange = onValueChange,
         label = { Text(label, color = Color.Gray) },
@@ -379,21 +367,21 @@ fun RegistroTextField(
 }
 
 @Composable
-fun PasswordStrengthBar(password: String, neonPurple: Color) {
-    val strength = when {
+fun PasswordStrengthBar(password: String, neonPurple: Color) { // Barra de fortaleza -> Feedback seguridad
+    val strength = when { // Calcula nivel -> Lógica de seguridad
         password.length < 6 -> 0.2f
         password.any { it.isDigit() } && password.any { it.isUpperCase() } -> 1f
         else -> 0.5f
     }
     
-    val color = when {
+    val color = when { // Asigna color -> Feedback visual semántico
         strength <= 0.2f -> Color.Red
         strength <= 0.5f -> Color.Yellow
         else -> neonPurple
     }
 
     Column(modifier = Modifier.padding(horizontal = 4.dp)) {
-        LinearProgressIndicator(
+        LinearProgressIndicator( // Indicador visual -> Barra de progreso
             progress = { strength },
             modifier = Modifier
                 .fillMaxWidth()
@@ -402,7 +390,7 @@ fun PasswordStrengthBar(password: String, neonPurple: Color) {
             color = color,
             trackColor = Color.White.copy(alpha = 0.1f),
         )
-        Text(
+        Text( // Etiqueta nivel -> Texto descriptivo
             text = when {
                 strength <= 0.2f -> "Débil"
                 strength <= 0.5f -> "Media"

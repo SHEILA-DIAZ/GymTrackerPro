@@ -1,72 +1,70 @@
-package com.example.gymtrackerpro.screens
+package com.example.gymtrackerpro.screens // Define paquete -> Ubicación en el proyecto
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.gymtrackerpro.model.Rutina
-import com.example.gymtrackerpro.viewmodel.GymViewModel
-import kotlinx.coroutines.delay
-import java.text.SimpleDateFormat
-import java.util.*
+import androidx.compose.animation.* // Importa animaciones -> Control de UI reactiva
+import androidx.compose.animation.core.* // Importa núcleo de animaciones -> Control de estados
+import androidx.compose.foundation.background // Importa fondo -> Estilo visual
+import androidx.compose.foundation.interaction.MutableInteractionSource // Importa fuente interacción -> Estado de entrada
+import androidx.compose.foundation.interaction.collectIsPressedAsState // Importa estado presión -> Feedback visual
+import androidx.compose.foundation.layout.* // Importa layouts -> Estructura de UI
+import androidx.compose.foundation.rememberScrollState // Importa estado scroll -> Persistencia de posición
+import androidx.compose.foundation.shape.RoundedCornerShape // Importa esquinas redondeadas -> Estilo visual
+import androidx.compose.foundation.text.KeyboardOptions // Importa teclado -> Configuración entrada
+import androidx.compose.foundation.verticalScroll // Importa scroll vertical -> Navegación de contenido
+import androidx.compose.material.icons.Icons // Importa iconos -> Librería Material
+import androidx.compose.material.icons.automirrored.filled.ArrowBack // Importa icono atrás -> Visual
+import androidx.compose.material.icons.filled.* // Importa todos los iconos -> Visuales
+import androidx.compose.material3.* // Importa componentes Material3 -> UI Kit
+import androidx.compose.runtime.* // Importa runtime de Compose -> Manejo de estados
+import androidx.compose.ui.Alignment // Importa alineación -> Posicionamiento
+import androidx.compose.ui.Modifier // Importa modificadores -> Atributos de componentes
+import androidx.compose.ui.draw.clip // Importa recorte -> Forma visual
+import androidx.compose.ui.graphics.Brush // Importa degradados -> Estilo visual
+import androidx.compose.ui.graphics.Color // Importa colores -> Estilo visual
+import androidx.compose.ui.graphics.graphicsLayer // Importa capa gráfica -> Transformaciones 2D/3D
+import androidx.compose.ui.graphics.vector.ImageVector // Importa vector imagen -> Tipo de icono
+import androidx.compose.ui.text.font.FontWeight // Importa peso fuente -> Estilo texto
+import androidx.compose.ui.text.input.KeyboardType // Importa tipo teclado -> Configuración entrada
+import androidx.compose.ui.unit.dp // Importa unidad dp -> Medidas UI
+import androidx.compose.ui.unit.sp // Importa unidad sp -> Tamaño texto
+import androidx.navigation.NavController // Importa controlador navegación -> Gestión de rutas
+import com.example.gymtrackerpro.model.Rutina // Importa Modelo Rutina -> Entidad
+import com.example.gymtrackerpro.viewmodel.GymViewModel // Importa ViewModel -> Lógica de negocio
+import kotlinx.coroutines.delay // Importa retardo -> Control de tiempo
+import java.text.SimpleDateFormat // Importa formateador fecha -> Utilidad de tiempo
+import java.util.* // Importa utilidades java -> Manejo de fechas
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
-    val usuario by viewModel.usuarioLogueado.collectAsState()
+@OptIn(ExperimentalMaterial3Api::class) // Habilita APIs experimentales -> Uso de ExposedDropdown/TopAppBar
+@Composable // Marca función como Composable -> Generador de UI
+fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) { // Pantalla agregar rutina -> Recibe controlador y VM
+    val usuario by viewModel.usuarioLogueado.collectAsState() // Observa sesión -> Obtiene ID de usuario
     
-    var ejercicio by remember { mutableStateOf("") }
-    var grupoMuscular by remember { mutableStateOf("Pecho") }
-    var series by remember { mutableStateOf("") }
-    var repeticiones by remember { mutableStateOf("") }
-    var peso by remember { mutableStateOf("") }
-    var fecha by remember { mutableStateOf(SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())) }
+    var ejercicio by remember { mutableStateOf("") } // Estado ejercicio -> Texto ingresado
+    var grupoMuscular by remember { mutableStateOf("Pecho") } // Estado categoría -> Valor seleccionado
+    var series by remember { mutableStateOf("") } // Estado series -> Texto numérico
+    var repeticiones by remember { mutableStateOf("") } // Estado reps -> Texto numérico
+    var peso by remember { mutableStateOf("") } // Estado peso -> Texto decimal
+    var fecha by remember { mutableStateOf(SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())) } // Estado fecha -> Generado automáticamente
 
-    val grupos = listOf("Pecho", "Espalda", "Pierna", "Brazo", "Hombro")
-    var expanded by remember { mutableStateOf(false) }
-    var visible by remember { mutableStateOf(false) }
+    val grupos = listOf("Pecho", "Espalda", "Pierna", "Brazo", "Hombro") // Opciones fijas -> Datos para selector
+    var expanded by remember { mutableStateOf(false) } // Estado dropdown -> Control apertura menú
+    var visible by remember { mutableStateOf(false) } // Estado animación -> Control de visibilidad
 
-    // Colores Fitness Premium
-    val darkBackground = Color(0xFF0D0D0D)
-    val neonPurple = Color(0xFF7B2FF7)
-    val gradientPurple = Color(0xFFA855F7)
-    val glassColor = Color(0xFFFFFFFF).copy(alpha = 0.05f)
+    val darkBackground = Color(0xFF0D0D0D) // Color fondo -> Paleta oscura
+    val neonPurple = Color(0xFF7B2FF7) // Color principal -> Paleta neón
+    val gradientPurple = Color(0xFFA855F7) // Color secundario -> Paleta degradada
+    val glassColor = Color(0xFFFFFFFF).copy(alpha = 0.05f) // Color traslúcido -> Efecto cristal
 
-    LaunchedEffect(Unit) {
-        delay(100)
-        visible = true
+    LaunchedEffect(Unit) { // Efecto arranque -> Se ejecuta al cargar
+        delay(100) // Pausa inicial -> Mejora estética
+        visible = true // Activa visibilidad -> Dispara animaciones
     }
 
-    Box(
+    Box( // Contenedor base -> Capas superpuestas
         modifier = Modifier
             .fillMaxSize()
             .background(darkBackground)
     ) {
-        // Overlay de degradado sutil
-        Box(
+        Box( // Fondo con degradado -> Estilo visual
             modifier = Modifier
                 .fillMaxSize()
                 .background(
@@ -80,10 +78,10 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
                 )
         )
 
-        Scaffold(
+        Scaffold( // Estructura pantalla -> Layout estándar
             containerColor = Color.Transparent,
             topBar = {
-                CenterAlignedTopAppBar(
+                CenterAlignedTopAppBar( // Barra superior -> Título y navegación
                     title = {
                         Text(
                             "Nueva Rutina",
@@ -93,7 +91,7 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
                         )
                     },
                     navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
+                        IconButton(onClick = { navController.popBackStack() }) { // Acción volver -> Regresa pantalla previa
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                 contentDescription = "Atrás",
@@ -107,7 +105,7 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
                 )
             }
         ) { padding ->
-            Column(
+            Column( // Contenedor vertical -> Formulario scrolleable
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding)
@@ -116,15 +114,14 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
                     .animateContentSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AnimatedVisibility(
+                AnimatedVisibility( // Animación entrada -> Grupo de inputs
                     visible = visible,
                     enter = fadeIn(tween(800)) + slideInVertically(initialOffsetY = { 20 })
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        // Campo Ejercicio
-                        PremiumTextField(
+                        PremiumTextField( // Campo ejercicio -> Entrada texto
                             value = ejercicio,
                             onValueChange = { ejercicio = it },
                             label = "Ejercicio",
@@ -133,12 +130,11 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
                             glassColor = glassColor
                         )
 
-                        // Selector de Grupo Muscular (Dropdown)
-                        ExposedDropdownMenuBox(
+                        ExposedDropdownMenuBox( // Selector desplegable -> Grupo muscular
                             expanded = expanded,
                             onExpandedChange = { expanded = !expanded }
                         ) {
-                            OutlinedTextField(
+                            OutlinedTextField( // Campo de texto del selector -> Solo lectura
                                 value = grupoMuscular,
                                 onValueChange = {},
                                 readOnly = true,
@@ -166,7 +162,7 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
                                 shape = RoundedCornerShape(16.dp)
                             )
                             
-                            DropdownMenu(
+                            DropdownMenu( // Menú de opciones -> Selección fija
                                 expanded = expanded,
                                 onDismissRequest = { expanded = false },
                                 modifier = Modifier
@@ -174,11 +170,11 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
                                     .fillMaxWidth(0.85f)
                             ) {
                                 grupos.forEach { selectionOption ->
-                                    DropdownMenuItem(
+                                    DropdownMenuItem( // Opción individual -> Item de lista
                                         text = { Text(selectionOption, color = Color.White) },
                                         onClick = {
-                                            grupoMuscular = selectionOption
-                                            expanded = false
+                                            grupoMuscular = selectionOption // Actualiza selección -> Dato UI
+                                            expanded = false // Cierra menú -> Acción UI
                                         },
                                         leadingIcon = {
                                             Icon(Icons.Default.Circle, contentDescription = null, tint = neonPurple, modifier = Modifier.size(8.dp))
@@ -188,9 +184,8 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
                             }
                         }
 
-                        // Fila de Series y Repeticiones
-                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            PremiumTextField(
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) { // Fila horizontal -> Inputs pareados
+                            PremiumTextField( // Campo series -> Entrada numérica
                                 value = series,
                                 onValueChange = { if (it.all { c -> c.isDigit() }) series = it },
                                 label = "Series",
@@ -200,7 +195,7 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
                                 modifier = Modifier.weight(1f),
                                 keyboardType = KeyboardType.Number
                             )
-                            PremiumTextField(
+                            PremiumTextField( // Campo repeticiones -> Entrada numérica
                                 value = repeticiones,
                                 onValueChange = { if (it.all { c -> c.isDigit() }) repeticiones = it },
                                 label = "Reps",
@@ -212,8 +207,7 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
                             )
                         }
 
-                        // Campo Peso
-                        PremiumTextField(
+                        PremiumTextField( // Campo peso -> Entrada decimal
                             value = peso,
                             onValueChange = { peso = it },
                             label = "Peso (kg)",
@@ -223,8 +217,7 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
                             keyboardType = KeyboardType.Decimal
                         )
 
-                        // Campo Fecha
-                        PremiumTextField(
+                        PremiumTextField( // Campo fecha -> Texto informativo
                             value = fecha,
                             onValueChange = { fecha = it },
                             label = "Fecha",
@@ -236,15 +229,14 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
 
                         Spacer(modifier = Modifier.height(32.dp))
 
-                        // Botón Guardar con animación
-                        val interactionSource = remember { MutableInteractionSource() }
-                        val isPressed by interactionSource.collectIsPressedAsState()
-                        val scale by animateFloatAsState(if (isPressed) 0.96f else 1f, label = "btnScale")
+                        val interactionSource = remember { MutableInteractionSource() } // Manejo interacción -> Feedback
+                        val isPressed by interactionSource.collectIsPressedAsState() // Detecta toque -> Estado reactivo
+                        val scale by animateFloatAsState(if (isPressed) 0.96f else 1f, label = "btnScale") // Calcula escala -> Animación
 
-                        Button(
+                        Button( // Botón de guardado -> Ejecuta inserción
                             onClick = {
-                                val userId = usuario?.id ?: return@Button
-                                val nuevaRutina = Rutina(
+                                val userId = usuario?.id ?: return@Button // Valida sesión -> Seguridad
+                                val nuevaRutina = Rutina( // Crea objeto -> Empaqueta datos
                                     usuarioId = userId,
                                     ejercicio = ejercicio,
                                     grupoMuscular = grupoMuscular,
@@ -253,8 +245,8 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
                                     pesoKg = peso.toDoubleOrNull() ?: 0.0,
                                     fecha = fecha
                                 )
-                                viewModel.agregarRutina(nuevaRutina)
-                                navController.popBackStack()
+                                viewModel.agregarRutina(nuevaRutina) // Llama a guardado -> Envía al ViewModel
+                                navController.popBackStack() // Vuelve atrás -> Acción final exitosa
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -271,7 +263,7 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
                             shape = RoundedCornerShape(16.dp),
                             interactionSource = interactionSource
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(verticalAlignment = Alignment.CenterVertically) { // Contenido botón -> Icono y texto
                                 Icon(Icons.Default.Save, contentDescription = null, tint = Color.White)
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
@@ -293,7 +285,7 @@ fun AgregarRutinaScreen(navController: NavController, viewModel: GymViewModel) {
 }
 
 @Composable
-private fun PremiumTextField(
+private fun PremiumTextField( // Componente personalizado -> Input estilizado
     value: String,
     onValueChange: (String) -> Unit,
     label: String,
@@ -304,7 +296,7 @@ private fun PremiumTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     trailingIcon: @Composable (() -> Unit)? = null
 ) {
-    OutlinedTextField(
+    OutlinedTextField( // Campo de texto -> Entrada de datos
         value = value,
         onValueChange = onValueChange,
         label = { Text(label, color = Color.Gray) },

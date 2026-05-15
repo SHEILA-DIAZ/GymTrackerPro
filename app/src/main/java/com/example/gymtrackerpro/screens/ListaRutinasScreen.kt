@@ -1,61 +1,59 @@
-package com.example.gymtrackerpro.screens
+package com.example.gymtrackerpro.screens // Define paquete -> Ubicación en el proyecto
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.gymtrackerpro.model.Rutina
-import com.example.gymtrackerpro.viewmodel.GymViewModel
-import kotlinx.coroutines.delay
+import androidx.compose.animation.* // Importa animaciones -> Control de UI reactiva
+import androidx.compose.animation.core.* // Importa núcleo de animaciones -> Control de estados
+import androidx.compose.foundation.background // Importa fondo -> Estilo visual
+import androidx.compose.foundation.clickable // Importa click -> Interacción de usuario
+import androidx.compose.foundation.layout.* // Importa layouts -> Estructura de UI
+import androidx.compose.foundation.lazy.LazyColumn // Importa lista vertical -> Carga optimizada
+import androidx.compose.foundation.lazy.items // Importa items de lista -> Vinculación de datos
+import androidx.compose.foundation.shape.CircleShape // Importa forma circular -> Estilo visual
+import androidx.compose.foundation.shape.RoundedCornerShape // Importa esquinas redondeadas -> Estilo visual
+import androidx.compose.material.icons.Icons // Importa iconos -> Librería Material
+import androidx.compose.material.icons.automirrored.filled.ArrowBack // Importa icono atrás -> Visual
+import androidx.compose.material.icons.filled.* // Importa todos los iconos -> Visuales
+import androidx.compose.material3.* // Importa componentes Material3 -> UI Kit
+import androidx.compose.runtime.* // Importa runtime de Compose -> Manejo de estados
+import androidx.compose.ui.Alignment // Importa alineación -> Posicionamiento
+import androidx.compose.ui.Modifier // Importa modificadores -> Atributos de componentes
+import androidx.compose.ui.draw.clip // Importa recorte -> Forma visual
+import androidx.compose.ui.graphics.Brush // Importa degradados -> Estilo visual
+import androidx.compose.ui.graphics.Color // Importa colores -> Estilo visual
+import androidx.compose.ui.graphics.graphicsLayer // Importa capa gráfica -> Transformaciones 2D/3D
+import androidx.compose.ui.text.font.FontWeight // Importa peso fuente -> Estilo texto
+import androidx.compose.ui.text.style.TextAlign // Importa alineación texto -> Formato
+import androidx.compose.ui.unit.dp // Importa unidad dp -> Medidas UI
+import androidx.compose.ui.unit.sp // Importa unidad sp -> Tamaño texto
+import androidx.navigation.NavController // Importa controlador navegación -> Gestión de rutas
+import com.example.gymtrackerpro.model.Rutina // Importa Modelo Rutina -> Entidad
+import com.example.gymtrackerpro.viewmodel.GymViewModel // Importa ViewModel -> Lógica de negocio
+import kotlinx.coroutines.delay // Importa retardo -> Control de tiempo
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ListaRutinasScreen(navController: NavController, viewModel: GymViewModel) {
-    val usuario by viewModel.usuarioLogueado.collectAsState()
-    val rutinas by viewModel.getRutinas(usuario?.id ?: 0).collectAsState(initial = emptyList())
+@OptIn(ExperimentalMaterial3Api::class) // Habilita APIs experimentales -> Uso de TopAppBar
+@Composable // Marca función como Composable -> Generador de UI
+fun ListaRutinasScreen(navController: NavController, viewModel: GymViewModel) { // Pantalla lista rutinas -> Recibe controlador y VM
+    val usuario by viewModel.usuarioLogueado.collectAsState() // Observa sesión -> Obtiene ID para filtrar
+    val rutinas by viewModel.getRutinas(usuario?.id ?: 0).collectAsState(initial = emptyList()) // Observa rutinas -> Obtiene lista del ViewModel
     
-    var routineToDelete by remember { mutableStateOf<Rutina?>(null) }
-    var visible by remember { mutableStateOf(false) }
+    var routineToDelete by remember { mutableStateOf<Rutina?>(null) } // Estado para borrado -> Referencia a objeto temporal
+    var visible by remember { mutableStateOf(false) } // Estado animación -> Control de visibilidad
 
-    // Colores Fitness Premium
-    val darkBackground = Color(0xFF0D0D0D)
-    val neonPurple = Color(0xFF7B2FF7)
-    val gradientPurple = Color(0xFFA855F7)
-    val glassColor = Color(0xFFFFFFFF).copy(alpha = 0.05f)
+    val darkBackground = Color(0xFF0D0D0D) // Color fondo -> Paleta oscura
+    val neonPurple = Color(0xFF7B2FF7) // Color principal -> Paleta neón
+    val gradientPurple = Color(0xFFA855F7) // Color secundario -> Paleta degradada
+    val glassColor = Color(0xFFFFFFFF).copy(alpha = 0.05f) // Color traslúcido -> Efecto cristal
 
-    LaunchedEffect(Unit) {
-        delay(100)
-        visible = true
+    LaunchedEffect(Unit) { // Efecto arranque -> Se ejecuta al cargar
+        delay(100) // Pausa estética -> Sincronía visual
+        visible = true // Activa visibilidad -> Dispara animaciones
     }
 
-    Box(
+    Box( // Contenedor base -> Capas superpuestas
         modifier = Modifier
             .fillMaxSize()
             .background(darkBackground)
     ) {
-        // Overlay de degradado
-        Box(
+        Box( // Overlay degradado -> Estilo visual
             modifier = Modifier
                 .fillMaxSize()
                 .background(
@@ -69,10 +67,10 @@ fun ListaRutinasScreen(navController: NavController, viewModel: GymViewModel) {
                 )
         )
 
-        Scaffold(
+        Scaffold( // Estructura pantalla -> Layout estándar
             containerColor = Color.Transparent,
             topBar = {
-                CenterAlignedTopAppBar(
+                CenterAlignedTopAppBar( // Barra superior -> Título y acciones
                     title = {
                         Text(
                             "Mis Rutinas",
@@ -82,7 +80,7 @@ fun ListaRutinasScreen(navController: NavController, viewModel: GymViewModel) {
                         )
                     },
                     navigationIcon = {
-                        IconButton(
+                        IconButton( // Botón atrás -> Navegación previa
                             onClick = { navController.popBackStack() },
                             modifier = Modifier
                                 .padding(8.dp)
@@ -97,13 +95,7 @@ fun ListaRutinasScreen(navController: NavController, viewModel: GymViewModel) {
                         }
                     },
                     actions = {
-                        IconButton(
-                            onClick = { /* Búsqueda */ },
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .clip(CircleShape)
-                                .background(glassColor)
-                        ) {
+                        IconButton(onClick = { }) { // Botón buscar -> Espacio para función futura
                             Icon(Icons.Default.Search, contentDescription = null, tint = Color.White)
                         }
                     },
@@ -113,7 +105,7 @@ fun ListaRutinasScreen(navController: NavController, viewModel: GymViewModel) {
                 )
             },
             floatingActionButton = {
-                FloatingActionButton(
+                FloatingActionButton( // Botón flotante -> Acción rápida agregar
                     onClick = { navController.navigate("agregar_rutina") },
                     containerColor = Color.Transparent,
                     elevation = FloatingActionButtonDefaults.elevation(0.dp),
@@ -130,35 +122,35 @@ fun ListaRutinasScreen(navController: NavController, viewModel: GymViewModel) {
                 }
             }
         ) { padding ->
-            AnimatedVisibility(
+            AnimatedVisibility( // Animación de lista -> Entrada suave
                 visible = visible,
                 enter = fadeIn(tween(800)) + slideInVertically(initialOffsetY = { 30 }),
                 modifier = Modifier.padding(padding)
             ) {
-                if (rutinas.isEmpty()) {
-                    EmptyRutinasState(neonPurple, navController)
+                if (rutinas.isEmpty()) { // Verificación vacíos -> Control de estado
+                    EmptyRutinasState(neonPurple, navController) // UI vacía -> Mensaje motivacional
                 } else {
-                    LazyColumn(
+                    LazyColumn( // Lista de rutinas -> Scroll optimizado
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(horizontal = 20.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         contentPadding = PaddingValues(top = 16.dp, bottom = 100.dp)
                     ) {
-                        items(rutinas, key = { it.id }) { rutina ->
-                            RutinaItemPremium(
+                        items(rutinas, key = { it.id }) { rutina -> // Itera rutinas -> Genera componentes
+                            RutinaItemPremium( // Ítem de rutina -> Tarjeta informativa
                                 rutina = rutina,
                                 neonPurple = neonPurple,
                                 glassColor = glassColor,
-                                onEdit = { navController.navigate("detalle_rutina/${rutina.id}") },
-                                onDelete = { routineToDelete = rutina }
+                                onEdit = { navController.navigate("detalle_rutina/${rutina.id}") }, // Navega a detalle -> Envía ID
+                                onDelete = { routineToDelete = rutina } // Prepara borrado -> Activa diálogo
                             )
                         }
                     }
                 }
             }
 
-            if (routineToDelete != null) {
+            if (routineToDelete != null) { // Diálogo de borrado -> Confirmación de seguridad
                 AlertDialog(
                     onDismissRequest = { routineToDelete = null },
                     containerColor = Color(0xFF1A1A1A),
@@ -169,8 +161,8 @@ fun ListaRutinasScreen(navController: NavController, viewModel: GymViewModel) {
                     confirmButton = {
                         TextButton(
                             onClick = {
-                                routineToDelete?.let { viewModel.eliminarRutina(it) }
-                                routineToDelete = null
+                                routineToDelete?.let { viewModel.eliminarRutina(it) } // Ejecuta borrado -> Llama al ViewModel
+                                routineToDelete = null // Cierra diálogo -> Acción final
                             },
                             colors = ButtonDefaults.textButtonColors(contentColor = Color.Red)
                         ) {
@@ -190,14 +182,14 @@ fun ListaRutinasScreen(navController: NavController, viewModel: GymViewModel) {
 }
 
 @Composable
-fun RutinaItemPremium(
+fun RutinaItemPremium( // Componente tarjeta rutina -> Visualización de registro
     rutina: Rutina,
     neonPurple: Color,
     glassColor: Color,
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
-    Card(
+    Card( // Contenedor item -> Estilo neón
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(24.dp))
@@ -206,15 +198,15 @@ fun RutinaItemPremium(
         colors = CardDefaults.cardColors(containerColor = glassColor),
         border = androidx.compose.foundation.BorderStroke(1.dp, Color.White.copy(alpha = 0.05f))
     ) {
-        Row(
+        Row( // Layout horizontal -> Información y acciones
             modifier = Modifier
                 .padding(20.dp)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
+            Column(modifier = Modifier.weight(1f)) { // Columna info -> Datos de rutina
+                Text( // Ejercicio -> Dato principal
                     text = rutina.ejercicio,
                     style = MaterialTheme.typography.titleLarge,
                     color = Color.White,
@@ -223,8 +215,7 @@ fun RutinaItemPremium(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // Chip Grupo Muscular
-                Box(
+                Box( // Chip categoría -> Grupo muscular
                     modifier = Modifier
                         .clip(RoundedCornerShape(8.dp))
                         .background(neonPurple.copy(alpha = 0.15f))
@@ -241,7 +232,7 @@ fun RutinaItemPremium(
 
                 Spacer(modifier = Modifier.height(12.dp))
                 
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically) { // Fila series/reps -> Info técnica
                     Icon(Icons.Default.History, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
@@ -251,7 +242,7 @@ fun RutinaItemPremium(
                     )
                 }
                 
-                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 4.dp)) { // Fila peso/fecha -> Info técnica
                     Icon(Icons.Default.MonitorWeight, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
@@ -271,8 +262,8 @@ fun RutinaItemPremium(
                 }
             }
             
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                IconButton(
+            Column(horizontalAlignment = Alignment.CenterHorizontally) { // Columna acciones -> Botones rápidos
+                IconButton( // Botón editar -> Navegación
                     onClick = onEdit,
                     modifier = Modifier
                         .size(40.dp)
@@ -282,7 +273,7 @@ fun RutinaItemPremium(
                     Icon(Icons.Default.Edit, contentDescription = "Editar", tint = Color.White, modifier = Modifier.size(20.dp))
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                IconButton(
+                IconButton( // Botón eliminar -> Confirmación
                     onClick = onDelete,
                     modifier = Modifier
                         .size(40.dp)
@@ -297,7 +288,7 @@ fun RutinaItemPremium(
 }
 
 @Composable
-fun EmptyRutinasState(neonPurple: Color, navController: NavController) {
+fun EmptyRutinasState(neonPurple: Color, navController: NavController) { // UI estado vacío -> Motivación al usuario
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -305,7 +296,7 @@ fun EmptyRutinasState(neonPurple: Color, navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Box(
+        Box( // Icono central -> Visual
             modifier = Modifier
                 .size(120.dp)
                 .clip(CircleShape)
@@ -322,7 +313,7 @@ fun EmptyRutinasState(neonPurple: Color, navController: NavController) {
         
         Spacer(modifier = Modifier.height(24.dp))
         
-        Text(
+        Text( // Título -> Mensaje informativo
             text = "Sin rutinas aún",
             color = Color.White,
             style = MaterialTheme.typography.headlineSmall,
@@ -331,7 +322,7 @@ fun EmptyRutinasState(neonPurple: Color, navController: NavController) {
         
         Spacer(modifier = Modifier.height(12.dp))
         
-        Text(
+        Text( // Descripción -> Guía al usuario
             text = "Tu transformación comienza con el primer registro. ¡Añade una rutina ahora!",
             color = Color.White.copy(alpha = 0.6f),
             textAlign = TextAlign.Center,
@@ -340,7 +331,7 @@ fun EmptyRutinasState(neonPurple: Color, navController: NavController) {
         
         Spacer(modifier = Modifier.height(32.dp))
         
-        OutlinedButton(
+        OutlinedButton( // Botón acción -> Crea primer registro
             onClick = { navController.navigate("agregar_rutina") },
             border = androidx.compose.foundation.BorderStroke(1.dp, neonPurple),
             shape = RoundedCornerShape(16.dp),
