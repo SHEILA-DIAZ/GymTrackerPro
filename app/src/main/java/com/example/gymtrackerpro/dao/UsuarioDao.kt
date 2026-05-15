@@ -11,15 +11,18 @@ interface UsuarioDao {
     @Insert
     suspend fun insertar(usuario: Usuario)
 
-    @Query("SELECT * FROM usuario WHERE email = :email AND password = :password LIMIT 1")
+    @Query("SELECT * FROM usuario WHERE nombre_usuario = :user AND password = :pass LIMIT 1")
     suspend fun buscarPorCredenciales(
-        email: String,
-        password: String
+        user: String,
+        pass: String
     ): Usuario?
 
     @Query("SELECT * FROM usuario WHERE id = :id")
     suspend fun buscarPorId(id: Int): Usuario?
 
     @Query("SELECT * FROM usuario WHERE email = :email LIMIT 1")
-    suspend fun existeUsuario(email: String): Usuario?
+    suspend fun existeUsuarioPorEmail(email: String): Usuario?
+
+    @Query("SELECT * FROM usuario WHERE nombre_usuario = :username LIMIT 1")
+    suspend fun existeUsuarioPorNombre(username: String): Usuario?
 }

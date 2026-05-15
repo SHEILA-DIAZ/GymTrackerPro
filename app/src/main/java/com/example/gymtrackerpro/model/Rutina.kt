@@ -1,21 +1,32 @@
 package com.example.gymtrackerpro.model
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "rutina")
 data class Rutina(
-
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
 
-    val nombre: String,
+    @ColumnInfo(name = "usuario_id")
+    val usuarioId: Int,
 
+    @ColumnInfo(name = "ejercicio")
+    val ejercicio: String,
+
+    @ColumnInfo(name = "grupo_muscular")
+    val grupoMuscular: String,
+
+    @ColumnInfo(name = "series")
     val series: Int,
 
+    @ColumnInfo(name = "repeticiones")
     val repeticiones: Int,
 
+    @ColumnInfo(name = "peso_kg")
     val pesoKg: Double,
 
-    val usuarioId: Int
+    @ColumnInfo(name = "fecha")
+    val fecha: String
 )

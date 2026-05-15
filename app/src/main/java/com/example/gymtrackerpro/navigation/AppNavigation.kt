@@ -6,28 +6,38 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.gymtrackerpro.screens.AddRutinaScreen
-import com.example.gymtrackerpro.screens.DetailScreen
-import com.example.gymtrackerpro.screens.HomeScreen
-import com.example.gymtrackerpro.viewmodel.RutinaViewModel
+import com.example.gymtrackerpro.screens.*
+import com.example.gymtrackerpro.viewmodel.GymViewModel
 
 @Composable
-fun AppNavigation(viewModel: RutinaViewModel) {
+fun AppNavigation(viewModel: GymViewModel) {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "home") {
-        composable("home") {
-            HomeScreen(navController, viewModel)
+    NavHost(navController = navController, startDestination = "login") {
+        composable("login") {
+            LoginScreen(navController, viewModel)
         }
-        composable("add") {
-            AddRutinaScreen(navController, viewModel)
+        composable("registro") {
+            RegistroScreen(navController, viewModel)
+        }
+        composable("menu") {
+            MenuPrincipalScreen(navController, viewModel)
+        }
+        composable("agregar_rutina") {
+            AgregarRutinaScreen(navController, viewModel)
+        }
+        composable("lista_rutinas") {
+            ListaRutinasScreen(navController, viewModel)
         }
         composable(
-            route = "detail/{rutinaId}",
+            route = "detalle_rutina/{rutinaId}",
             arguments = listOf(navArgument("rutinaId") { type = NavType.IntType })
         ) { backStackEntry ->
             val rutinaId = backStackEntry.arguments?.getInt("rutinaId") ?: 0
-            DetailScreen(navController, viewModel, rutinaId)
+            DetalleRutinaScreen(navController, viewModel, rutinaId)
+        }
+        composable("perfil") {
+            PerfilUsuarioScreen(navController, viewModel)
         }
     }
 }
